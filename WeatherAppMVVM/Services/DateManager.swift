@@ -19,15 +19,19 @@ class DateManager {
     var dateFormatter = DateFormatter()
     
     func todayDate(type: DateType) -> String {
-        
         if type == .full {
             dateFormatter.dateFormat = "EEEE, dd, MMMM"
         } else {
             dateFormatter.dateFormat = "yyyy-MM-dd"
         }
-        
         let dateString = dateFormatter.string(from: currentDate)
         return dateString
+    }
+    
+    func currentTime() {
+        dateFormatter.dateFormat = "HH"
+        let dateString = dateFormatter.string(from: currentDate)
+        print("\(dateString):00:00")
     }
     
 }

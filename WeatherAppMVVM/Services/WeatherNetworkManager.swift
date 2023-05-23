@@ -11,9 +11,9 @@ class WeatherNetworkManager {
     
     static let shared = WeatherNetworkManager()
     
-    func fetchRequest(city: String?, completion: @escaping (_ weather: Weather)->()) {
+    func fetchRequest(days: String?, city: String?, completion: @escaping (_ weather: Weather)->()) {
         guard let city = city else { return }
-        let urlString = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline?location=\(city)&unitGroup=metric&key=YSZEGQDUS95JN9QK35FVTXA32&contentType=json"
+        let urlString = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/\(city)/next1days?unitGroup=us&key=YSZEGQDUS95JN9QK35FVTXA32 "
         guard let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) else { return }
         let url = URL(string: encodedString )
         guard let url = url else { return }

@@ -16,6 +16,9 @@
 		316FD8D42A14D2E2008AD686 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316FD8D32A14D2E2008AD686 /* Weather.swift */; };
 		316FD8D72A14D928008AD686 /* WeatherNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 316FD8D62A14D928008AD686 /* WeatherNetworkManager.swift */; };
 		31FEF2312A1D0390000AFB35 /* DateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEF2302A1D0390000AFB35 /* DateManager.swift */; };
+		31FEF2342A1D3AFA000AFB35 /* AllHoursCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEF2332A1D3AFA000AFB35 /* AllHoursCollectionViewCell.swift */; };
+		31FEF2362A1D3B24000AFB35 /* AllHoursCollectionViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEF2352A1D3B24000AFB35 /* AllHoursCollectionViewCellViewModel.swift */; };
+		31FEF2382A1D3B4B000AFB35 /* AllHoursCollectionViewCellViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEF2372A1D3B4B000AFB35 /* AllHoursCollectionViewCellViewModelProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +33,9 @@
 		316FD8D32A14D2E2008AD686 /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		316FD8D62A14D928008AD686 /* WeatherNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherNetworkManager.swift; sourceTree = "<group>"; };
 		31FEF2302A1D0390000AFB35 /* DateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateManager.swift; sourceTree = "<group>"; };
+		31FEF2332A1D3AFA000AFB35 /* AllHoursCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllHoursCollectionViewCell.swift; sourceTree = "<group>"; };
+		31FEF2352A1D3B24000AFB35 /* AllHoursCollectionViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllHoursCollectionViewCellViewModel.swift; sourceTree = "<group>"; };
+		31FEF2372A1D3B4B000AFB35 /* AllHoursCollectionViewCellViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllHoursCollectionViewCellViewModelProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +55,7 @@
 				316FD8C02A14CAE3008AD686 /* WeatherTodayViewController.swift */,
 				3155FB612A1790DE00E515F6 /* WeatherTodayViewModel.swift */,
 				3155FB632A1790EB00E515F6 /* WeatherTodayViewModelProtocol.swift */,
+				31FEF2322A1D3AD3000AFB35 /* AllHoursCollectionViewCell */,
 			);
 			path = WeatherTodayViewController;
 			sourceTree = "<group>";
@@ -106,6 +113,16 @@
 				31FEF2302A1D0390000AFB35 /* DateManager.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		31FEF2322A1D3AD3000AFB35 /* AllHoursCollectionViewCell */ = {
+			isa = PBXGroup;
+			children = (
+				31FEF2332A1D3AFA000AFB35 /* AllHoursCollectionViewCell.swift */,
+				31FEF2352A1D3B24000AFB35 /* AllHoursCollectionViewCellViewModel.swift */,
+				31FEF2372A1D3B4B000AFB35 /* AllHoursCollectionViewCellViewModelProtocol.swift */,
+			);
+			path = AllHoursCollectionViewCell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -178,11 +195,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31FEF2342A1D3AFA000AFB35 /* AllHoursCollectionViewCell.swift in Sources */,
 				31FEF2312A1D0390000AFB35 /* DateManager.swift in Sources */,
 				316FD8C12A14CAE3008AD686 /* WeatherTodayViewController.swift in Sources */,
+				31FEF2362A1D3B24000AFB35 /* AllHoursCollectionViewCellViewModel.swift in Sources */,
 				316FD8D42A14D2E2008AD686 /* Weather.swift in Sources */,
 				3155FB622A1790DE00E515F6 /* WeatherTodayViewModel.swift in Sources */,
 				3155FB642A1790EB00E515F6 /* WeatherTodayViewModelProtocol.swift in Sources */,
+				31FEF2382A1D3B4B000AFB35 /* AllHoursCollectionViewCellViewModelProtocol.swift in Sources */,
 				316FD8BD2A14CAE3008AD686 /* AppDelegate.swift in Sources */,
 				316FD8D72A14D928008AD686 /* WeatherNetworkManager.swift in Sources */,
 			);

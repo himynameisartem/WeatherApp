@@ -67,6 +67,8 @@ class WeatherTodayViewController: UIViewController {
         setupProperties()
         setupConstraints()
         
+        DateManager.shared.currentTime()
+        
         view.backgroundColor = UIColor(named: "backgroundColor")
     }
     
@@ -101,7 +103,7 @@ class WeatherTodayViewController: UIViewController {
         chanceOfRainNameLabel = UILabel()
         allDetailStackView = UIStackView()
         todayLabel = UILabel()
-        sevenDaysButton = UIButton()
+        sevenDaysButton = UIButton(type: .system)
         layout = UICollectionViewFlowLayout()
         allHoursCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         
@@ -233,17 +235,26 @@ class WeatherTodayViewController: UIViewController {
         
         todayLabel.translatesAutoresizingMaskIntoConstraints = false
         todayLabel.text = "Today"
-        todayLabel.textColor = UIColor(named: "TextColor")
         todayLabel.font = UIFont(name: "helvetica-bold", size: 14)
         todayLabel.textAlignment = .left
         
         sevenDaysButton.translatesAutoresizingMaskIntoConstraints = false
+        sevenDaysButton.tintColor = UIColor(named: "textColor")
         sevenDaysButton.setTitle("7 days ᐳ", for: .normal)
-        sevenDaysButton.setTitleColor(UIColor(named: "TextColor"), for: .normal)
         sevenDaysButton.titleLabel?.font = UIFont(name: "helvetica-light", size: 12)
         sevenDaysButton.titleLabel?.textAlignment = .right
+        sevenDaysButton.addTarget(self, action: #selector(sevenDaysButtonTransition), for: .touchUpInside)
 
+        
+        layout.scrollDirection = .horizontal
+        layout.minimumLineSpacing = 10
+        allHoursCollectionView.showsHorizontalScrollIndicator = false
+        allHoursCollectionView.layer.cornerRadius = 10
         allHoursCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        allHoursCollectionView.contentInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        allHoursCollectionView.delegate = self
+        allHoursCollectionView.dataSource = self
+        allHoursCollectionView.register(AllHoursCollectionViewCell.self, forCellWithReuseIdentifier: "allHoursCollectionViewCell")
         
     }
     
@@ -315,11 +326,15 @@ class WeatherTodayViewController: UIViewController {
         ])
     }
     
-    @objc func searchButtonTapped() {
+    @objc private func searchButtonTapped() {
         
     }
     
-    @objc func currentLocation() {
+    @objc private func currentLocation() {
+        
+    }
+    
+    @objc private func sevenDaysButtonTransition() {
         
     }
 }
@@ -327,26 +342,9 @@ class WeatherTodayViewController: UIViewController {
 extension WeatherTodayViewController: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
         guard let enteredCity = textField.text, !enteredCity.isEmpty else { return false }
-        
         viewModel.city = enteredCity
-        
-        viewModel.fetchWeather {
-            DispatchQueue.main.async {
-                self.cityNameLabel.text = self.viewModel.weather?.resolvedAddress ?? ""
-                self.temperatureLabel.text = String(self.viewModel.weather?.currentConditions?.temp ?? 0.0)
-                self.weatherDescriptionLabel.text = self.viewModel.weather?.currentConditions?.conditions ?? "error"
-                self.windOptionLabel.text = "\(String(self.viewModel.weather?.currentConditions?.windspeed ?? 0.0)) km/h"
-                self.humidityOptionLabel.text = "\(String(self.viewModel.weather?.currentConditions?.humidity ?? 0.0))%"
-                self.chanceOfRainOptionLabel.text = "\(String(self.viewModel.weather?.currentConditions?.precipprob ?? 0.0))%"
-                self.weatherImage.image = UIImage(named: self.viewModel.weather?.currentConditions?.icon ?? "")
-                self.dateLabel.text = DateManager.shared.todayDate(type: .full)
-            }
-        }
-        
         textField.resignFirstResponder()
-        
         return true
     }
     
@@ -354,7 +352,7 @@ extension WeatherTodayViewController: UITextFieldDelegate {
 
 extension WeatherTodayViewController {
     
-    func settingDetailStackViews(stackView: UIStackView, imageView: UIImageView, optionalLabel: UILabel, nameLabel: UILabel, imageSystemName: String, name: String) {
+    private func settingDetailStackViews(stackView: UIStackView, imageView: UIImageView, optionalLabel: UILabel, nameLabel: UILabel, imageSystemName: String, name: String) {
         stackView.axis = .vertical
         stackView.alignment = .center
         stackView.distribution = .fillEqually
@@ -367,5 +365,25 @@ extension WeatherTodayViewController {
         nameLabel.textColor = .white
         nameLabel.alpha = 0.5
     }
+    
+}
+
+extension WeatherTodayViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 20
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "allHoursCollectionViewCell", for: indexPath) as! AllHoursCollectionViewCell
+        
+        cell.backgroundColor = .red
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width / 4 , height: collectionView.frame.height - 10)
+    }
+    
     
 }
