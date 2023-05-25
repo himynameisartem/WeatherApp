@@ -67,6 +67,7 @@ class CurrentConditions: WeatherProperties {
     
 class WeatherProperties: Decodable {
     let datetime: String?
+    let datetimeEpoch: Double?
     let temp: Float?
     let feelslike: Float?
     let humidity: Float?

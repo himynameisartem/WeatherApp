@@ -8,22 +8,22 @@
 import Foundation
 
 class AllHoursCollectionViewCellViewModel: AllHoursCollectionViewCellViewModelProtocol {
-    private var weather: Weather
+    private var hours: Hours
     
-    var temp: String {
-        return weather.days?[0].hours?[10].datetime ?? "sdfr"
+    var temp: Float {
+        return hours.temp ?? 0.0
     }
     
     var image: String {
-        return ""
+        return hours.icon ?? ""
     }
     
     var time: String {
-        return ""
+        return hours.datetime ?? ""
     }
     
-    required init(weather: Weather) {
-        self.weather = weather
+    required init(hours: Hours) {
+        self.hours = hours
     }
     
     

@@ -28,11 +28,17 @@ class DateManager {
         return dateString
     }
     
-    func currentTime() {
-        dateFormatter.dateFormat = "HH"
-        let dateString = dateFormatter.string(from: currentDate)
-        print("\(dateString):00:00")
+    func epochToDate(epochTime: Double) -> Bool {
+        let date = Date(timeIntervalSince1970: epochTime)
+        dateFormatter.dateFormat = "HH:mm:ss EEEE,dd,MMMM"
+        let hours = dateFormatter.string(from: date)
+        let currentDate = dateFormatter.string(from: currentDate)
+        
+        if dateFormatter.date(from: hours)! > dateFormatter.date(from: currentDate)! {
+            return true
+        } else {
+            return false
+        }
     }
-    
 }
 

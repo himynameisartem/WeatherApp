@@ -53,6 +53,8 @@ class WeatherTodayViewController: UIViewController {
                     self.chanceOfRainOptionLabel.text = "\(String(weather.precipprob ?? 0.0))%"
                     self.weatherImage.image = UIImage(named: weather.icon ?? "")
                     self.dateLabel.text = DateManager.shared.todayDate(type: .full)
+                    
+                    self.allHoursCollectionView.reloadData()
                 }
             }
         }
@@ -66,9 +68,7 @@ class WeatherTodayViewController: UIViewController {
         setupUI()
         setupProperties()
         setupConstraints()
-        
-        DateManager.shared.currentTime()
-        
+                
         view.backgroundColor = UIColor(named: "backgroundColor")
     }
     
@@ -370,13 +370,14 @@ extension WeatherTodayViewController {
 
 extension WeatherTodayViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        guard let count = viewModel.numberOfItems() else {return 0 }
+        return 24
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "allHoursCollectionViewCell", for: indexPath) as! AllHoursCollectionViewCell
-        
-        cell.backgroundColor = .red
+        let cellViewModel = viewModel.cellViewModel(for: indexPath)
+        cell.viewModel = cellViewModel
         
         return cell
     }
@@ -384,6 +385,4 @@ extension WeatherTodayViewController: UICollectionViewDelegate, UICollectionView
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width / 4 , height: collectionView.frame.height - 10)
     }
-    
-    
 }

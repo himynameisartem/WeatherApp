@@ -19,6 +19,7 @@
 		31FEF2342A1D3AFA000AFB35 /* AllHoursCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEF2332A1D3AFA000AFB35 /* AllHoursCollectionViewCell.swift */; };
 		31FEF2362A1D3B24000AFB35 /* AllHoursCollectionViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEF2352A1D3B24000AFB35 /* AllHoursCollectionViewCellViewModel.swift */; };
 		31FEF2382A1D3B4B000AFB35 /* AllHoursCollectionViewCellViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEF2372A1D3B4B000AFB35 /* AllHoursCollectionViewCellViewModelProtocol.swift */; };
+		31FEF23A2A1E12FA000AFB35 /* HoursManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FEF2392A1E12FA000AFB35 /* HoursManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		31FEF2332A1D3AFA000AFB35 /* AllHoursCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllHoursCollectionViewCell.swift; sourceTree = "<group>"; };
 		31FEF2352A1D3B24000AFB35 /* AllHoursCollectionViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllHoursCollectionViewCellViewModel.swift; sourceTree = "<group>"; };
 		31FEF2372A1D3B4B000AFB35 /* AllHoursCollectionViewCellViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllHoursCollectionViewCellViewModelProtocol.swift; sourceTree = "<group>"; };
+		31FEF2392A1E12FA000AFB35 /* HoursManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoursManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 			children = (
 				316FD8D62A14D928008AD686 /* WeatherNetworkManager.swift */,
 				31FEF2302A1D0390000AFB35 /* DateManager.swift */,
+				31FEF2392A1E12FA000AFB35 /* HoursManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 				31FEF2382A1D3B4B000AFB35 /* AllHoursCollectionViewCellViewModelProtocol.swift in Sources */,
 				316FD8BD2A14CAE3008AD686 /* AppDelegate.swift in Sources */,
 				316FD8D72A14D928008AD686 /* WeatherNetworkManager.swift in Sources */,
+				31FEF23A2A1E12FA000AFB35 /* HoursManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
