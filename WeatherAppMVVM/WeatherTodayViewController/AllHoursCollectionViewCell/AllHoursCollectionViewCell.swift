@@ -15,7 +15,7 @@ class AllHoursCollectionViewCell: UICollectionViewCell {
     
     var viewModel: AllHoursCollectionViewCellViewModelProtocol! {
         didSet {
-            self.tempLabel.text = String(viewModel.temp)
+            self.tempLabel.text = "\(String(viewModel.temp))°"
             self.weatherImage.image = UIImage(named: viewModel.image)
             self.timeLabel.text = String(viewModel.time.dropLast(3))
         }
@@ -37,6 +37,8 @@ class AllHoursCollectionViewCell: UICollectionViewCell {
         addSubview(tempLabel)
         addSubview(weatherImage)
         addSubview(timeLabel)
+        
+
     }
     
     private func setupProperties() {
@@ -55,12 +57,13 @@ class AllHoursCollectionViewCell: UICollectionViewCell {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            tempLabel.topAnchor.constraint(equalTo: topAnchor, constant: 2),
-            tempLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            
-            weatherImage.topAnchor.constraint(equalTo: tempLabel.bottomAnchor, constant: 0),
             weatherImage.centerXAnchor.constraint(equalTo: centerXAnchor),
+            weatherImage.centerYAnchor.constraint(equalTo: centerYAnchor),
             weatherImage.heightAnchor.constraint(equalToConstant: frame.height / 2),
+            
+            tempLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: 2),
+            tempLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            tempLabel.bottomAnchor.constraint(equalTo: weatherImage.topAnchor, constant: 2),
             
             timeLabel.topAnchor.constraint(equalTo: weatherImage.bottomAnchor, constant: 2),
             timeLabel.centerXAnchor.constraint(equalTo: centerXAnchor),

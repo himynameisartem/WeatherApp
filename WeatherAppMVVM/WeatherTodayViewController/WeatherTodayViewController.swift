@@ -74,6 +74,7 @@ class WeatherTodayViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         gradient.frame = todayView.bounds
+        
     }
     
     private func setupUI() {
@@ -179,23 +180,32 @@ class WeatherTodayViewController: UIViewController {
         temperatureLabel.font = UIFont(name: "helvetica-bold", size: 90)
         temperatureLabel.textColor = .white
         temperatureLabel.textAlignment = .center
+        temperatureLabel.adjustsFontSizeToFitWidth = true
+        temperatureLabel.minimumScaleFactor = 0.5
         
         degreeSign.translatesAutoresizingMaskIntoConstraints = false
-        degreeSign.font = UIFont(name: "helvetica", size: 70)
+        degreeSign.font = UIFont(name: "helvetica-light", size: 70)
         degreeSign.textColor = .white
         degreeSign.alpha = 0.5
         degreeSign.text = "°"
+        degreeSign.textAlignment = .left
+//        degreeSign.adjustsFontSizeToFitWidth = true
+//        degreeSign.minimumScaleFactor = 0.5
         
         weatherDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherDescriptionLabel.font = UIFont(name: "helvetica-bold", size: 26)
         weatherDescriptionLabel.textColor = .white
         weatherDescriptionLabel.textAlignment = .center
+        weatherDescriptionLabel.adjustsFontSizeToFitWidth = true
+        weatherDescriptionLabel.minimumScaleFactor = 0.5
         
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
         dateLabel.font = UIFont(name: "helvetica", size: 16)
         dateLabel.textColor = .white
         dateLabel.alpha = 0.5
         dateLabel.textAlignment = .center
+        dateLabel.adjustsFontSizeToFitWidth = true
+        dateLabel.minimumScaleFactor = 0.5
         
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         separatorView.backgroundColor = .systemGray5
@@ -287,19 +297,28 @@ class WeatherTodayViewController: UIViewController {
             weatherImage.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: 20),
             weatherImage.leadingAnchor.constraint(equalTo: todayView.leadingAnchor, constant: 20),
             weatherImage.trailingAnchor.constraint(equalTo: todayView.trailingAnchor, constant: -20),
-            weatherImage.heightAnchor.constraint(equalToConstant: view.frame.height / 4.5),
+            weatherImage.heightAnchor.constraint(lessThanOrEqualToConstant: view.frame.height / 4.5),
+            weatherImage.heightAnchor.constraint(greaterThanOrEqualToConstant: view.frame.height / 6),
             
             temperatureLabel.topAnchor.constraint(equalTo: weatherImage.bottomAnchor),
             temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+//            temperatureLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 80),
+//            temperatureLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 60),
             
-            degreeSign.topAnchor.constraint(equalTo: weatherImage.bottomAnchor),
-            degreeSign.leadingAnchor.constraint(equalTo: temperatureLabel.trailingAnchor),
+//            degreeSign.topAnchor.constraint(equalTo: weatherImage.bottomAnchor),
+//            degreeSign.leadingAnchor.constraint(equalTo: temperatureLabel.trailingAnchor),
+//            degreeSign.bottomAnchor.constraint(equalTo: weatherDescriptionLabel.topAnchor),
              
-            weatherDescriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor, constant: 0),
+            weatherDescriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor),
             weatherDescriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            weatherDescriptionLabel.bottomAnchor.constraint(equalTo: dateLabel.topAnchor),
+            weatherDescriptionLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 20),
+            weatherDescriptionLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 15),
             
             dateLabel.topAnchor.constraint(equalTo: weatherDescriptionLabel.bottomAnchor, constant: 0),
             dateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            dateLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 20),
+            dateLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 15),
             
             allDetailStackView.leadingAnchor.constraint(equalTo: todayView.leadingAnchor, constant: 10),
             allDetailStackView.trailingAnchor.constraint(equalTo: todayView.trailingAnchor, constant: -10),
@@ -309,9 +328,7 @@ class WeatherTodayViewController: UIViewController {
             separatorView.leadingAnchor.constraint(equalTo: todayView.leadingAnchor, constant: 20),
             separatorView.trailingAnchor.constraint(equalTo: todayView.trailingAnchor, constant: -20),
             separatorView.heightAnchor.constraint(equalToConstant: 1),
-            
-            weatherDescriptionLabel.bottomAnchor.constraint(lessThanOrEqualTo: separatorView.topAnchor, constant: -10),
-            
+
             todayLabel.topAnchor.constraint(equalTo: todayView.bottomAnchor, constant: 10),
             todayLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             
@@ -322,7 +339,8 @@ class WeatherTodayViewController: UIViewController {
             allHoursCollectionView.topAnchor.constraint(equalTo: todayLabel.bottomAnchor),
             allHoursCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             allHoursCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            allHoursCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            allHoursCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            dateLabel.bottomAnchor.constraint(lessThanOrEqualTo: separatorView.topAnchor, constant: -5),
         ])
     }
     
@@ -369,8 +387,9 @@ extension WeatherTodayViewController {
 }
 
 extension WeatherTodayViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let count = viewModel.numberOfItems() else {return 0 }
+        guard viewModel.numberOfItems() != nil else { return 0 }
         return 24
     }
     
