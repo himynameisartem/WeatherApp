@@ -9,12 +9,12 @@ import Foundation
 
 class WeatherTodayViewModel: WeatherTodayViewModelProtocol {
     
-    var city: String? = "Moscow"
+    var city: String? 
     
     var weather: Weather? = nil
     
     func fetchWeather(completion: @escaping () -> Void) {
-        WeatherNetworkManager.shared.fetchRequest(days: "1", city: city) { weather in
+        WeatherNetworkManager.shared.fetchRequest(days: "7", city: city) { weather in
             self.weather = weather
             completion()
         }

@@ -6,9 +6,13 @@
 //
 
 import UIKit
+import CoreLocation
 
 class WeatherTodayViewController: UIViewController {
     
+    private var locationManager: CLLocationManager!
+    private var longitude: CLLocationDegrees!
+    private var latitude: CLLocationDegrees!
     private var todayView: UIView!
     private var gradient: CAGradientLayer!
     private var searchButton: UIButton!
@@ -17,7 +21,6 @@ class WeatherTodayViewController: UIViewController {
     private var cityNameLabel: UILabel!
     private var weatherImage: UIImageView!
     private var temperatureLabel: UILabel!
-    private var degreeSign: UILabel!
     private var weatherDescriptionLabel: UILabel!
     private var dateLabel: UILabel!
     private var separatorView: UIView!
@@ -38,22 +41,26 @@ class WeatherTodayViewController: UIViewController {
     private var sevenDaysButton: UIButton!
     private var allHoursCollectionView: UICollectionView!
     private var layout: UICollectionViewFlowLayout!
+    private var tapGesture: UITapGestureRecognizer!
 
     
     var viewModel: WeatherTodayViewModelProtocol! {
         didSet {
             viewModel.fetchWeather {
+                
                 guard let weather = self.viewModel.weather?.currentConditions else { return }
+                
                 DispatchQueue.main.async {
-                    self.cityNameLabel.text = self.viewModel.weather?.resolvedAddress ?? ""
-                    self.temperatureLabel.text = String(weather.temp ?? 0.0)
+                    LocatioManager.shared.fetchLocation(lon: self.viewModel.weather?.longitude ?? 0.0,
+                                                        lat: self.viewModel.weather?.latitude ?? 0.0,
+                                                        locationName: self.cityNameLabel)
+                    self.temperatureLabel.text = " \(String(weather.temp ?? 0.0))°"
                     self.weatherDescriptionLabel.text = weather.conditions ?? "error"
                     self.windOptionLabel.text = "\(String(weather.windspeed ?? 0.0)) km/h"
                     self.humidityOptionLabel.text = "\(String(weather.humidity ?? 0.0))%"
                     self.chanceOfRainOptionLabel.text = "\(String(weather.precipprob ?? 0.0))%"
                     self.weatherImage.image = UIImage(named: weather.icon ?? "")
                     self.dateLabel.text = DateManager.shared.todayDate(type: .full)
-                    
                     self.allHoursCollectionView.reloadData()
                 }
             }
@@ -64,10 +71,15 @@ class WeatherTodayViewController: UIViewController {
         super.viewDidLoad()
         
         viewModel = WeatherTodayViewModel()
-        
+      
+       
         setupUI()
         setupProperties()
         setupConstraints()
+        
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
                 
         view.backgroundColor = UIColor(named: "backgroundColor")
     }
@@ -78,6 +90,9 @@ class WeatherTodayViewController: UIViewController {
     }
     
     private func setupUI() {
+        locationManager = CLLocationManager()
+        longitude = CLLocationDegrees()
+        latitude = CLLocationDegrees()
         todayView = UIView()
         gradient = CAGradientLayer()
         searchButton = UIButton()
@@ -86,7 +101,6 @@ class WeatherTodayViewController: UIViewController {
         cityNameLabel = UILabel()
         weatherImage = UIImageView()
         temperatureLabel = UILabel()
-        degreeSign = UILabel()
         weatherDescriptionLabel = UILabel()
         dateLabel = UILabel()
         separatorView = UIView()
@@ -107,6 +121,7 @@ class WeatherTodayViewController: UIViewController {
         sevenDaysButton = UIButton(type: .system)
         layout = UICollectionViewFlowLayout()
         allHoursCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        tapGesture = UITapGestureRecognizer()
         
         view.addSubview(todayView)
         todayView.layer.addSublayer(gradient)
@@ -116,7 +131,6 @@ class WeatherTodayViewController: UIViewController {
         todayView.addSubview(cityNameLabel)
         todayView.addSubview(weatherImage)
         todayView.addSubview(temperatureLabel)
-        todayView.addSubview(degreeSign)
         todayView.addSubview(weatherDescriptionLabel)
         todayView.addSubview(dateLabel)
         todayView.addSubview(separatorView)
@@ -139,6 +153,7 @@ class WeatherTodayViewController: UIViewController {
         view.addSubview(todayLabel)
         view.addSubview(sevenDaysButton)
         view.addSubview(allHoursCollectionView)
+        view.addGestureRecognizer(tapGesture)
         
         choiseCityTextField.delegate = self
     }
@@ -182,15 +197,6 @@ class WeatherTodayViewController: UIViewController {
         temperatureLabel.textAlignment = .center
         temperatureLabel.adjustsFontSizeToFitWidth = true
         temperatureLabel.minimumScaleFactor = 0.5
-        
-        degreeSign.translatesAutoresizingMaskIntoConstraints = false
-        degreeSign.font = UIFont(name: "helvetica-light", size: 70)
-        degreeSign.textColor = .white
-        degreeSign.alpha = 0.5
-        degreeSign.text = "°"
-        degreeSign.textAlignment = .left
-//        degreeSign.adjustsFontSizeToFitWidth = true
-//        degreeSign.minimumScaleFactor = 0.5
         
         weatherDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         weatherDescriptionLabel.font = UIFont(name: "helvetica-bold", size: 26)
@@ -266,6 +272,8 @@ class WeatherTodayViewController: UIViewController {
         allHoursCollectionView.dataSource = self
         allHoursCollectionView.register(AllHoursCollectionViewCell.self, forCellWithReuseIdentifier: "allHoursCollectionViewCell")
         
+        tapGesture.addTarget(self, action: #selector(endEdidtingTapped))
+        
     }
     
     private func setupConstraints() {
@@ -290,11 +298,11 @@ class WeatherTodayViewController: UIViewController {
             choiseCityTextField.trailingAnchor.constraint(equalTo: searchButton.leadingAnchor, constant: -10),
             choiseCityTextField.heightAnchor.constraint(equalToConstant: 30),
             
-            cityNameLabel.topAnchor.constraint(equalTo: choiseCityTextField.bottomAnchor, constant: 10),
+            cityNameLabel.topAnchor.constraint(equalTo: choiseCityTextField.bottomAnchor, constant: 20),
             cityNameLabel.leadingAnchor.constraint(equalTo: todayView.leadingAnchor, constant: 10),
             cityNameLabel.trailingAnchor.constraint(equalTo: todayView.trailingAnchor, constant: -10),
             
-            weatherImage.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor, constant: 20),
+            weatherImage.topAnchor.constraint(equalTo: cityNameLabel.bottomAnchor),
             weatherImage.leadingAnchor.constraint(equalTo: todayView.leadingAnchor, constant: 20),
             weatherImage.trailingAnchor.constraint(equalTo: todayView.trailingAnchor, constant: -20),
             weatherImage.heightAnchor.constraint(lessThanOrEqualToConstant: view.frame.height / 4.5),
@@ -302,22 +310,15 @@ class WeatherTodayViewController: UIViewController {
             
             temperatureLabel.topAnchor.constraint(equalTo: weatherImage.bottomAnchor),
             temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            temperatureLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 80),
-//            temperatureLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 60),
-            
-//            degreeSign.topAnchor.constraint(equalTo: weatherImage.bottomAnchor),
-//            degreeSign.leadingAnchor.constraint(equalTo: temperatureLabel.trailingAnchor),
-//            degreeSign.bottomAnchor.constraint(equalTo: weatherDescriptionLabel.topAnchor),
+            temperatureLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 60),
              
             weatherDescriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor),
             weatherDescriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             weatherDescriptionLabel.bottomAnchor.constraint(equalTo: dateLabel.topAnchor),
-            weatherDescriptionLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 20),
             weatherDescriptionLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 15),
             
             dateLabel.topAnchor.constraint(equalTo: weatherDescriptionLabel.bottomAnchor, constant: 0),
             dateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            dateLabel.heightAnchor.constraint(lessThanOrEqualToConstant: 20),
             dateLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 15),
             
             allDetailStackView.leadingAnchor.constraint(equalTo: todayView.leadingAnchor, constant: 10),
@@ -345,15 +346,22 @@ class WeatherTodayViewController: UIViewController {
     }
     
     @objc private func searchButtonTapped() {
-        
+        guard let enteredCity = choiseCityTextField.text else { return }
+        viewModel.city = enteredCity
+        choiseCityTextField.resignFirstResponder()
     }
     
     @objc private func currentLocation() {
-        
+        let coordinate = String(latitude) + "," + String(longitude)
+        viewModel.city = coordinate
     }
     
     @objc private func sevenDaysButtonTransition() {
         
+    }
+    
+    @objc private func endEdidtingTapped() {
+        choiseCityTextField.endEditing(true)
     }
 }
 
@@ -403,5 +411,20 @@ extension WeatherTodayViewController: UICollectionViewDelegate, UICollectionView
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: view.frame.width / 4 , height: collectionView.frame.height - 10)
+    }
+}
+
+extension WeatherTodayViewController: CLLocationManagerDelegate {
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            longitude = location.coordinate.longitude
+            latitude = location.coordinate.latitude
+            
+            DispatchQueue.main.async {
+                let coordinate = String(self.latitude) + "," + String(self.longitude)
+                self.viewModel.city = coordinate
+            }
+        }
     }
 }
