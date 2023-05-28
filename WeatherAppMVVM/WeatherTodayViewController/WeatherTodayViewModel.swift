@@ -10,7 +10,6 @@ import Foundation
 class WeatherTodayViewModel: WeatherTodayViewModelProtocol {
     
     var city: String? 
-    
     var weather: Weather? = nil
     
     func fetchWeather(completion: @escaping () -> Void) {

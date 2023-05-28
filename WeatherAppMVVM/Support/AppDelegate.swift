@@ -15,9 +15,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
         let rootViewController = WeatherTodayViewController()
-        
+        let navVC = UINavigationController()
+        navVC.viewControllers = [rootViewController]
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = rootViewController
+        window?.rootViewController = navVC
         window?.makeKeyAndVisible()
         
         return true

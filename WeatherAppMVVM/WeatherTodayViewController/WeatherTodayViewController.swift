@@ -76,11 +76,8 @@ class WeatherTodayViewController: UIViewController {
         setupUI()
         setupProperties()
         setupConstraints()
-        
-        locationManager.delegate = self
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
-                
+
+        navigationController?.navigationBar.isHidden = true
         view.backgroundColor = UIColor(named: "backgroundColor")
     }
     
@@ -272,6 +269,10 @@ class WeatherTodayViewController: UIViewController {
         allHoursCollectionView.dataSource = self
         allHoursCollectionView.register(AllHoursCollectionViewCell.self, forCellWithReuseIdentifier: "allHoursCollectionViewCell")
         
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
         tapGesture.addTarget(self, action: #selector(endEdidtingTapped))
         
     }
@@ -357,7 +358,8 @@ class WeatherTodayViewController: UIViewController {
     }
     
     @objc private func sevenDaysButtonTransition() {
-        
+        let vc = SevenDaysWeatherViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func endEdidtingTapped() {
