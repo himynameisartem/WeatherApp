@@ -13,5 +13,6 @@ protocol WeatherTodayViewModelProtocol {
     func fetchWeather(completion: @escaping() -> Void)
     func numberOfItems() -> Int?
     func cellViewModel(for indexPath: IndexPath) -> AllHoursCollectionViewCellViewModelProtocol?
+    func sevenDaysWeather() -> SevenDaysViewModelProtocol?
     func selectedRow(for indexPath: IndexPath)
 }

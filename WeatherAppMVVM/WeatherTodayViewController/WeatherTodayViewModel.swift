@@ -8,7 +8,7 @@
 import Foundation
 
 class WeatherTodayViewModel: WeatherTodayViewModelProtocol {
-    
+
     var city: String? 
     var weather: Weather? = nil
     
@@ -47,5 +47,10 @@ class WeatherTodayViewModel: WeatherTodayViewModelProtocol {
     
     func selectedRow(for indexPath: IndexPath) {
         self.indexPath = indexPath
+    }
+    
+    func sevenDaysWeather() -> SevenDaysViewModelProtocol? {
+        guard let sevenDaysWeather = weather else { return nil }
+        return SevenDaysViewModel(weather: sevenDaysWeather)
     }
 }

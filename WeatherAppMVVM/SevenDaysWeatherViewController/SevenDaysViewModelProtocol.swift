@@ -8,5 +8,13 @@
 import Foundation
 
 protocol SevenDaysViewModelProtocol {
-    
+    var days: [Days]? { get }
+    var temp: String { get }
+    var tempMin: String { get }
+    var wind: String { get }
+    var humidity: String { get }
+    var chanceOfRain: String { get }
+    var weatherDescription: String { get }
+    var weatherImage: String { get }
+    init(weather: Weather)
 }

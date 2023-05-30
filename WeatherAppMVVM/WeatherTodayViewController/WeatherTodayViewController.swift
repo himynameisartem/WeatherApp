@@ -49,7 +49,7 @@ class WeatherTodayViewController: UIViewController {
             viewModel.fetchWeather {
                 
                 guard let weather = self.viewModel.weather?.currentConditions else { return }
-                
+                guard let chance = self.viewModel.weather?.days?[0].precipprob else { return }
                 DispatchQueue.main.async {
                     LocatioManager.shared.fetchLocation(lon: self.viewModel.weather?.longitude ?? 0.0,
                                                         lat: self.viewModel.weather?.latitude ?? 0.0,
@@ -58,7 +58,7 @@ class WeatherTodayViewController: UIViewController {
                     self.weatherDescriptionLabel.text = weather.conditions ?? "error"
                     self.windOptionLabel.text = "\(String(weather.windspeed ?? 0.0)) km/h"
                     self.humidityOptionLabel.text = "\(String(weather.humidity ?? 0.0))%"
-                    self.chanceOfRainOptionLabel.text = "\(String(weather.precipprob ?? 0.0))%"
+                    self.chanceOfRainOptionLabel.text = "\(chance)%"
                     self.weatherImage.image = UIImage(named: weather.icon ?? "")
                     self.dateLabel.text = DateManager.shared.todayDate(type: .full)
                     self.allHoursCollectionView.reloadData()
@@ -359,6 +359,7 @@ class WeatherTodayViewController: UIViewController {
     
     @objc private func sevenDaysButtonTransition() {
         let vc = SevenDaysWeatherViewController()
+        vc.viewModel = viewModel.sevenDaysWeather()
         navigationController?.pushViewController(vc, animated: true)
     }
     
