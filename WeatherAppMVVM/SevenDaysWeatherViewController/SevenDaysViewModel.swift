@@ -56,6 +56,18 @@ class SevenDaysViewModel: SevenDaysViewModelProtocol {
         return adress
     }
     
+    private var indexPath: IndexPath!
+    
+    func numberOfItems() -> Int? {
+        return days?.count
+    }
+    
+    func cellViewModel(for indexPath: IndexPath) -> SevenDaysTableViewCellViewModelProtocol? {
+        guard let days = days else { return nil }
+        let day = days[indexPath.row + 1]
+        return SevenDaysTableViewCellViewModel(days: day)
+    }
+    
     required init(weather: Weather) {
         self.weather = weather
     }

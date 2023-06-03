@@ -40,5 +40,12 @@ class DateManager {
             return false
         }
     }
+    
+    func fetchWeekday(epochTime: Double) -> String {
+        let date = Date(timeIntervalSince1970: epochTime)
+        dateFormatter.dateFormat = "EEE"
+        let dateString = dateFormatter.string(from: date)
+        return dateString
+    }
 }
 

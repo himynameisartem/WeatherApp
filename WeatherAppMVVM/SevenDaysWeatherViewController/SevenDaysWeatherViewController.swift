@@ -33,6 +33,7 @@ class SevenDaysWeatherViewController: UIViewController {
     private var chanceOfRainOptionLabel: UILabel!
     private var chanceOfRainNameLabel: UILabel!
     private var allDetailStackView: UIStackView!
+    var sevenDaysTableView: UITableView!
     
     var viewModel: SevenDaysViewModelProtocol! 
     
@@ -48,7 +49,6 @@ class SevenDaysWeatherViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         gradient.frame = backgroundView.bounds
-        
     }
 
     
@@ -77,6 +77,7 @@ class SevenDaysWeatherViewController: UIViewController {
         chanceOfRainOptionLabel = UILabel()
         chanceOfRainNameLabel = UILabel()
         allDetailStackView = UIStackView()
+        sevenDaysTableView = UITableView()
         
         view.addSubview(backgroundView)
         backgroundView.layer.addSublayer(gradient)
@@ -105,6 +106,7 @@ class SevenDaysWeatherViewController: UIViewController {
         allDetailStackView.addArrangedSubview(windStackView)
         allDetailStackView.addArrangedSubview(humidityStackView)
         allDetailStackView.addArrangedSubview(chanceOfRainStackView)
+        view.addSubview(sevenDaysTableView)
     }
     
     private func setupSettings() {
@@ -142,12 +144,16 @@ class SevenDaysWeatherViewController: UIViewController {
         tommorowLabel.text = "Tommorow"
         tommorowLabel.textAlignment = .left
         tommorowLabel.textColor = .white
+        tommorowLabel.adjustsFontSizeToFitWidth = true
+        tommorowLabel.minimumScaleFactor = 0.5
         
         tempLabel.translatesAutoresizingMaskIntoConstraints = false
         tempLabel.font = UIFont(name: "helvetica-bold", size: 50)
         tempLabel.textColor = .white
         tempLabel.text = viewModel.temp
         tempLabel.textAlignment = .left
+        tempLabel.adjustsFontSizeToFitWidth = true
+        tempLabel.minimumScaleFactor = 0.5        
         
         minTempLabel.translatesAutoresizingMaskIntoConstraints = false
         minTempLabel.font = UIFont(name: "helvetica-bold", size: 30)
@@ -155,12 +161,15 @@ class SevenDaysWeatherViewController: UIViewController {
         minTempLabel.alpha = 0.5
         minTempLabel.textAlignment = .left
         minTempLabel.text = viewModel.tempMin
+        minTempLabel.adjustsFontSizeToFitWidth = true
+        minTempLabel.minimumScaleFactor = 0.6
         
         weatherDiscription.translatesAutoresizingMaskIntoConstraints = false
         weatherDiscription.font = UIFont(name: "helvetica-light", size: 14)
         weatherDiscription.textColor = .white
         weatherDiscription.textAlignment = .left
         weatherDiscription.alpha = 0.5
+        weatherDiscription.adjustsFontSizeToFitWidth = true
         weatherDiscription.text = viewModel.weatherDescription
         
         separatorView.translatesAutoresizingMaskIntoConstraints = false
@@ -190,6 +199,12 @@ class SevenDaysWeatherViewController: UIViewController {
         allDetailStackView.translatesAutoresizingMaskIntoConstraints = false
         allDetailStackView.distribution = .fillEqually
         
+        sevenDaysTableView.translatesAutoresizingMaskIntoConstraints = false
+        sevenDaysTableView.delegate = self
+        sevenDaysTableView.dataSource = self
+        sevenDaysTableView.register(SevenDaysTableViewCell.self, forCellReuseIdentifier: "sevenDaysCell")
+        sevenDaysTableView.isUserInteractionEnabled = false
+        sevenDaysTableView.separatorStyle = .none
         
     }
     
@@ -211,32 +226,46 @@ class SevenDaysWeatherViewController: UIViewController {
             calendarSign.centerYAnchor.constraint(equalTo: sevenDaysLabel.centerYAnchor),
             calendarSign.trailingAnchor.constraint(equalTo: sevenDaysLabel.leadingAnchor),
             
-            weatherImage.topAnchor.constraint(equalTo: sevenDaysLabel.bottomAnchor, constant: 20),
+            weatherImage.topAnchor.constraint(equalTo: sevenDaysLabel.bottomAnchor, constant: 10),
             weatherImage.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 10),
             weatherImage.widthAnchor.constraint(equalToConstant: view.frame.width / 2.5 - 10),
-            weatherImage.heightAnchor.constraint(equalToConstant: (view.frame.height / 3) / 2.5),
             
             tempLabel.centerYAnchor.constraint(equalTo: weatherImage.centerYAnchor),
             tempLabel.leadingAnchor.constraint(equalTo: weatherImage.trailingAnchor),
             
             minTempLabel.bottomAnchor.constraint(equalTo: tempLabel.bottomAnchor),
             minTempLabel.leadingAnchor.constraint(equalTo: tempLabel.trailingAnchor),
+            minTempLabel.centerYAnchor.constraint(equalTo: tempLabel.centerYAnchor, constant: 6),
             minTempLabel.trailingAnchor.constraint(lessThanOrEqualTo: backgroundView.trailingAnchor, constant: -10),
             
+            tommorowLabel.topAnchor.constraint(greaterThanOrEqualTo: sevenDaysLabel.bottomAnchor, constant: 3),
             tommorowLabel.leadingAnchor.constraint(equalTo: weatherImage.trailingAnchor),
-            tommorowLabel.bottomAnchor.constraint(equalTo: tempLabel.topAnchor),
-            
-            weatherDiscription.topAnchor.constraint(equalTo: tempLabel.bottomAnchor),
+            tommorowLabel.bottomAnchor.constraint(greaterThanOrEqualTo: tempLabel.topAnchor, constant: -20),
+            tommorowLabel.bottomAnchor.constraint(lessThanOrEqualTo: tempLabel.topAnchor, constant: 0),
+                        
+            weatherDiscription.topAnchor.constraint(greaterThanOrEqualTo: tempLabel.bottomAnchor, constant: -5),
             weatherDiscription.leadingAnchor.constraint(equalTo: weatherImage.trailingAnchor),
             
             allDetailStackView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 10),
             allDetailStackView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -10),
-            allDetailStackView.bottomAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: -20),
+            allDetailStackView.bottomAnchor.constraint(lessThanOrEqualTo: backgroundView.bottomAnchor, constant: -10),
+            allDetailStackView.bottomAnchor.constraint(greaterThanOrEqualTo: backgroundView.bottomAnchor, constant: -20),
             
-            separatorView.bottomAnchor.constraint(equalTo: allDetailStackView.topAnchor, constant: -20),
+            separatorView.bottomAnchor.constraint(lessThanOrEqualTo: allDetailStackView.topAnchor, constant: -5),
+            separatorView.bottomAnchor.constraint(greaterThanOrEqualTo: allDetailStackView.topAnchor, constant: -20),
             separatorView.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 20),
             separatorView.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -20),
             separatorView.heightAnchor.constraint(equalToConstant: 1),
+            
+            weatherDiscription.topAnchor.constraint(greaterThanOrEqualTo: tempLabel.bottomAnchor, constant: 2),
+            weatherDiscription.topAnchor.constraint(lessThanOrEqualTo: tempLabel.bottomAnchor, constant: 20),
+            weatherDiscription.bottomAnchor.constraint(lessThanOrEqualTo: separatorView.topAnchor, constant: -2),
+            weatherImage.bottomAnchor.constraint(equalTo: separatorView.topAnchor, constant: -5),
+            
+            sevenDaysTableView.topAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: 10),
+            sevenDaysTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            sevenDaysTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            sevenDaysTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
  
@@ -261,6 +290,30 @@ extension SevenDaysWeatherViewController {
         nameLabel.font = UIFont.systemFont(ofSize: 12)
         nameLabel.textColor = .white
         nameLabel.alpha = 0.5
+    }
+}
+
+extension SevenDaysWeatherViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        guard let count = viewModel.numberOfItems() else { return 0 }
+        return count - 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "sevenDaysCell", for: indexPath) as! SevenDaysTableViewCell
+        
+        let cellViewModel = viewModel.cellViewModel(for: indexPath)
+        cell.viewModel = cellViewModel
+        cell.isSelected = false
+        
+        cell.awakeFromNib()
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return (view.frame.height - view.frame.height / 3) / 7
     }
     
 }

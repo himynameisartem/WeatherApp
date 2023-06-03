@@ -16,5 +16,7 @@ protocol SevenDaysViewModelProtocol {
     var chanceOfRain: String { get }
     var weatherDescription: String { get }
     var weatherImage: String { get }
+    func numberOfItems() -> Int?
+    func cellViewModel(for indexPath: IndexPath) -> SevenDaysTableViewCellViewModelProtocol?
     init(weather: Weather)
 }
