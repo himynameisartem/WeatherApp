@@ -8,23 +8,21 @@
 import Foundation
 
 class AllHoursCollectionViewCellViewModel: AllHoursCollectionViewCellViewModelProtocol {
-    private var hours: Hours
+    var hour: Hour
     
-    var temp: Float {
-        return hours.temp ?? 0.0
+    var temp: String {
+        return String(hour.temp_c ?? 0.0)
     }
     
     var image: String {
-        return hours.icon ?? ""
+        return hour.condition?.weatherImageName() ?? ""
     }
     
     var time: String {
-        return hours.datetime ?? ""
+        return hour.time ?? ""
     }
     
-    required init(hours: Hours) {
-        self.hours = hours
+    init(hour: Hour) {
+        self.hour = hour
     }
-    
-    
 }

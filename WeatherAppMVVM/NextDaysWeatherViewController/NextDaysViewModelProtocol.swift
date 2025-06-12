@@ -1,5 +1,5 @@
 //
-//  SevenDaysViewModelProtocol.swift
+//  NextDaysViewModelProtocol .swift
 //  WeatherAppMVVM
 //
 //  Created by Артем Кудрявцев on 26.05.2023.
@@ -7,8 +7,7 @@
 
 import Foundation
 
-protocol SevenDaysViewModelProtocol {
-    var days: [Days]? { get }
+protocol NextDaysViewModelProtocol {
     var temp: String { get }
     var tempMin: String { get }
     var wind: String { get }
@@ -16,7 +15,7 @@ protocol SevenDaysViewModelProtocol {
     var chanceOfRain: String { get }
     var weatherDescription: String { get }
     var weatherImage: String { get }
+    var nextDaysWeather: [Forecastday]? { get }
     func numberOfItems() -> Int?
-    func cellViewModel(for indexPath: IndexPath) -> SevenDaysTableViewCellViewModelProtocol?
-    init(weather: Weather)
+    func cellViewModel(for indexPath: IndexPath) -> NextDaysTableViewCellViewModelProtocol?
 }

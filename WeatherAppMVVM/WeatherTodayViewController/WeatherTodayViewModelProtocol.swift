@@ -11,8 +11,8 @@ protocol WeatherTodayViewModelProtocol {
     var weather: Weather? { get }
     var city: String? { get set }
     func fetchWeather(completion: @escaping() -> Void)
-    func numberOfItems() -> Int?
+    func numberOfItems() -> Int
     func cellViewModel(for indexPath: IndexPath) -> AllHoursCollectionViewCellViewModelProtocol?
-    func sevenDaysWeather() -> SevenDaysViewModelProtocol?
+    func sevenDaysWeather() -> NextDaysViewModelProtocol?
     func selectedRow(for indexPath: IndexPath)
 }

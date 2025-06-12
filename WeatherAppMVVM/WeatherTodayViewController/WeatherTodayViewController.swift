@@ -32,61 +32,51 @@ class WeatherTodayViewController: UIViewController {
     private var humidityImageView: UIImageView!
     private var humidityOptionLabel: UILabel!
     private var humidityNameLabel: UILabel!
-    private var chanceOfRainStackView: UIStackView!
-    private var chanceOfRainImageView: UIImageView!
-    private var chanceOfRainOptionLabel: UILabel!
-    private var chanceOfRainNameLabel: UILabel!
+    private var precipitationStackView: UIStackView!
+    private var precipitationImageView: UIImageView!
+    private var precipitationOptionLabel: UILabel!
+    private var precipitationNameLabel: UILabel!
     private var allDetailStackView: UIStackView!
     private var todayLabel: UILabel!
-    private var sevenDaysButton: UIButton!
+    private var nextDaysButton: UIButton!
     private var allHoursCollectionView: UICollectionView!
     private var layout: UICollectionViewFlowLayout!
     private var tapGesture: UITapGestureRecognizer!
-
+    
     
     var viewModel: WeatherTodayViewModelProtocol! {
         didSet {
             viewModel.fetchWeather {
-                
-                guard let weather = self.viewModel.weather?.currentConditions else { return }
-                guard let chance = self.viewModel.weather?.days?[0].precipprob else { return }
-                DispatchQueue.main.async {
-                    LocatioManager.shared.fetchLocation(lon: self.viewModel.weather?.longitude ?? 0.0,
-                                                        lat: self.viewModel.weather?.latitude ?? 0.0,
-                                                        locationName: self.cityNameLabel)
-                    self.temperatureLabel.text = " \(String(weather.temp ?? 0.0))°"
-                    self.weatherDescriptionLabel.text = weather.conditions ?? "error"
-                    self.windOptionLabel.text = "\(String(weather.windspeed ?? 0.0)) km/h"
-                    self.humidityOptionLabel.text = "\(String(weather.humidity ?? 0.0))%"
-                    self.chanceOfRainOptionLabel.text = "\(chance)%"
-                    self.weatherImage.image = UIImage(named: weather.icon ?? "")
-                    self.dateLabel.text = DateManager.shared.todayDate(type: .full)
-                    self.allHoursCollectionView.reloadData()
-                }
+                guard let weather = self.viewModel.weather else { return }
+                self.cityNameLabel.text = weather.location?.name ?? ""
+                self.temperatureLabel.text = "\(weather.current?.temp_c ?? 0.0)°"
+                self.weatherDescriptionLabel.text = weather.current?.condition?.text ?? ""
+                self.windOptionLabel.text = "\(weather.current?.wind_kph ?? 0.0) km/h"
+                self.humidityOptionLabel.text = "\(weather.current?.humidity ?? 0.0)%"
+                self.precipitationOptionLabel.text = "\(weather.current?.precip_mm ?? 0.0) mm."
+                self.weatherImage.image = UIImage(named: weather.current?.condition?.weatherImageName() ?? "")
+                self.dateLabel.text = DateManager.shared.todayDate(type: .full)
+                self.nextDaysButton.isEnabled = true
+                self.allHoursCollectionView.reloadData()
             }
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         viewModel = WeatherTodayViewModel()
-      
-       
-        setupUI()
-        setupProperties()
-        setupConstraints()
-
-        navigationController?.navigationBar.isHidden = true
-        view.backgroundColor = UIColor(named: "backgroundColor")
+        configureUI()
+        configureProperties()
+        makeConstraints()
     }
     
     override func viewDidLayoutSubviews() {
         gradient.frame = todayView.bounds
-        
     }
     
-    private func setupUI() {
+    private func configureUI() {
+        navigationController?.navigationBar.isHidden = true
+        view.backgroundColor = UIColor(named: "backgroundColor")
         locationManager = CLLocationManager()
         longitude = CLLocationDegrees()
         latitude = CLLocationDegrees()
@@ -109,13 +99,13 @@ class WeatherTodayViewController: UIViewController {
         humidityImageView = UIImageView()
         humidityOptionLabel = UILabel()
         humidityNameLabel = UILabel()
-        chanceOfRainStackView = UIStackView()
-        chanceOfRainImageView = UIImageView()
-        chanceOfRainOptionLabel = UILabel()
-        chanceOfRainNameLabel = UILabel()
+        precipitationStackView = UIStackView()
+        precipitationImageView = UIImageView()
+        precipitationOptionLabel = UILabel()
+        precipitationNameLabel = UILabel()
         allDetailStackView = UIStackView()
         todayLabel = UILabel()
-        sevenDaysButton = UIButton(type: .system)
+        nextDaysButton = UIButton(type: .system)
         layout = UICollectionViewFlowLayout()
         allHoursCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         tapGesture = UITapGestureRecognizer()
@@ -139,23 +129,23 @@ class WeatherTodayViewController: UIViewController {
         humidityStackView.addArrangedSubview(humidityImageView)
         humidityStackView.addArrangedSubview(humidityOptionLabel)
         humidityStackView.addArrangedSubview(humidityNameLabel)
-        todayView.addSubview(chanceOfRainStackView)
-        chanceOfRainStackView.addArrangedSubview(chanceOfRainImageView)
-        chanceOfRainStackView.addArrangedSubview(chanceOfRainOptionLabel)
-        chanceOfRainStackView.addArrangedSubview(chanceOfRainNameLabel)
+        todayView.addSubview(precipitationStackView)
+        precipitationStackView.addArrangedSubview(precipitationImageView)
+        precipitationStackView.addArrangedSubview(precipitationOptionLabel)
+        precipitationStackView.addArrangedSubview(precipitationNameLabel)
         todayView.addSubview(allDetailStackView)
         allDetailStackView.addArrangedSubview(windStackView)
         allDetailStackView.addArrangedSubview(humidityStackView)
-        allDetailStackView.addArrangedSubview(chanceOfRainStackView)
+        allDetailStackView.addArrangedSubview(precipitationStackView)
         view.addSubview(todayLabel)
-        view.addSubview(sevenDaysButton)
+        view.addSubview(nextDaysButton)
         view.addSubview(allHoursCollectionView)
         view.addGestureRecognizer(tapGesture)
-        
         choiseCityTextField.delegate = self
+        
     }
     
-    private func setupProperties() {
+    private func configureProperties() {
         
         let topColor = #colorLiteral(red: 0.08297913522, green: 0.7363885045, blue: 0.9625709653, alpha: 1).cgColor
         let bottomColor = #colorLiteral(red: 0.06859397143, green: 0.4181304872, blue: 0.9508929849, alpha: 1).cgColor
@@ -235,12 +225,12 @@ class WeatherTodayViewController: UIViewController {
                                 nameLabel: humidityNameLabel,
                                 imageSystemName: "humidity",
                                 name: "Humidity")
-        settingDetailStackViews(stackView: chanceOfRainStackView,
-                                imageView: chanceOfRainImageView,
-                                optionalLabel: chanceOfRainOptionLabel,
-                                nameLabel: chanceOfRainNameLabel,
+        settingDetailStackViews(stackView: precipitationStackView,
+                                imageView: precipitationImageView,
+                                optionalLabel: precipitationOptionLabel,
+                                nameLabel: precipitationNameLabel,
                                 imageSystemName: "cloud.rain",
-                                name: "Chance of rain")
+                                name: "Precipitation")
         
         allDetailStackView.axis = .horizontal
         allDetailStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -251,13 +241,14 @@ class WeatherTodayViewController: UIViewController {
         todayLabel.font = UIFont(name: "helvetica-bold", size: 14)
         todayLabel.textAlignment = .left
         
-        sevenDaysButton.translatesAutoresizingMaskIntoConstraints = false
-        sevenDaysButton.tintColor = UIColor(named: "textColor")
-        sevenDaysButton.setTitle("7 days ᐳ", for: .normal)
-        sevenDaysButton.titleLabel?.font = UIFont(name: "helvetica-light", size: 12)
-        sevenDaysButton.titleLabel?.textAlignment = .right
-        sevenDaysButton.addTarget(self, action: #selector(sevenDaysButtonTransition), for: .touchUpInside)
-
+        nextDaysButton.translatesAutoresizingMaskIntoConstraints = false
+        nextDaysButton.tintColor = UIColor(named: "textColor")
+        nextDaysButton.setTitle("next days ᐳ", for: .normal)
+        nextDaysButton.titleLabel?.font = UIFont(name: "helvetica-light", size: 12)
+        nextDaysButton.titleLabel?.textAlignment = .right
+        nextDaysButton.isEnabled = false
+        nextDaysButton.addTarget(self, action: #selector(sevenDaysButtonTransition), for: .touchUpInside)
+        
         
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = 10
@@ -277,7 +268,7 @@ class WeatherTodayViewController: UIViewController {
         
     }
     
-    private func setupConstraints() {
+    private func makeConstraints() {
         NSLayoutConstraint.activate([
             todayView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
             todayView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
@@ -312,7 +303,7 @@ class WeatherTodayViewController: UIViewController {
             temperatureLabel.topAnchor.constraint(equalTo: weatherImage.bottomAnchor),
             temperatureLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             temperatureLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 60),
-             
+            
             weatherDescriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor),
             weatherDescriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             weatherDescriptionLabel.bottomAnchor.constraint(equalTo: dateLabel.topAnchor),
@@ -330,13 +321,13 @@ class WeatherTodayViewController: UIViewController {
             separatorView.leadingAnchor.constraint(equalTo: todayView.leadingAnchor, constant: 20),
             separatorView.trailingAnchor.constraint(equalTo: todayView.trailingAnchor, constant: -20),
             separatorView.heightAnchor.constraint(equalToConstant: 1),
-
+            
             todayLabel.topAnchor.constraint(equalTo: todayView.bottomAnchor, constant: 10),
             todayLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             
-            sevenDaysButton.topAnchor.constraint(equalTo: todayView.bottomAnchor, constant: 10),
-            sevenDaysButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            sevenDaysButton.heightAnchor.constraint(equalToConstant: 20),
+            nextDaysButton.topAnchor.constraint(equalTo: todayView.bottomAnchor, constant: 10),
+            nextDaysButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            nextDaysButton.heightAnchor.constraint(equalToConstant: 20),
             
             allHoursCollectionView.topAnchor.constraint(equalTo: todayLabel.bottomAnchor),
             allHoursCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -358,7 +349,7 @@ class WeatherTodayViewController: UIViewController {
     }
     
     @objc private func sevenDaysButtonTransition() {
-        let vc = SevenDaysWeatherViewController()
+        let vc = NextDaysWeatherViewController()
         vc.viewModel = viewModel.sevenDaysWeather()
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -369,15 +360,15 @@ class WeatherTodayViewController: UIViewController {
 }
 
 extension WeatherTodayViewController: UITextFieldDelegate {
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         guard let enteredCity = textField.text, !enteredCity.isEmpty else { return false }
         viewModel.city = enteredCity
         textField.resignFirstResponder()
         return true
     }
-    
 }
+
+//MARK: - settingDetailStackViews
 
 extension WeatherTodayViewController {
     
@@ -394,21 +385,20 @@ extension WeatherTodayViewController {
         nameLabel.textColor = .white
         nameLabel.alpha = 0.5
     }
-    
 }
+
+//MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 
 extension WeatherTodayViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard viewModel.numberOfItems() != nil else { return 0 }
-        return 24
+        return viewModel.numberOfItems()
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "allHoursCollectionViewCell", for: indexPath) as! AllHoursCollectionViewCell
         let cellViewModel = viewModel.cellViewModel(for: indexPath)
         cell.viewModel = cellViewModel
-        
         return cell
     }
     
@@ -416,6 +406,8 @@ extension WeatherTodayViewController: UICollectionViewDelegate, UICollectionView
         return CGSize(width: view.frame.width / 4 , height: collectionView.frame.height - 10)
     }
 }
+
+//MARK: - CLLocationManagerDelegate
 
 extension WeatherTodayViewController: CLLocationManagerDelegate {
     

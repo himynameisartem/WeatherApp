@@ -8,49 +8,48 @@
 import Foundation
 
 class WeatherTodayViewModel: WeatherTodayViewModelProtocol {
-
-    var city: String? 
+    
+    var city: String?
     var weather: Weather? = nil
-    
-    func fetchWeather(completion: @escaping () -> Void) {
-        WeatherNetworkManager.shared.fetchRequest(days: "7", city: city) { weather in
-            self.weather = weather
-            completion()
-        }
-    }
-    
     private var indexPath: IndexPath?
     
-    private var hours: [Hours]? {
-        var currentHours = [Hours]()
-        guard let days = weather?.days else { return nil }
-        for i in days {
-            guard let hours = i.hours else { return nil }
-            for j in hours {
-                if DateManager.shared.epochToDate(epochTime: j.datetimeEpoch ?? 0.0) {
-                    currentHours.append(j)
-                }
+    func fetchWeather(completion: @escaping () -> Void) {
+        WeatherNetworkManager.shared.fetchRequest(city: city) { weather in
+            DispatchQueue.main.async {
+                self.weather = weather
+                completion()
             }
         }
-        return currentHours
     }
     
-    func numberOfItems() -> Int? {
-        hours?.count
+    func numberOfItems() -> Int {
+        return weather?.forecast?.forecastday?.first?.hour?.count ?? 0
     }
     
     func cellViewModel(for indexPath: IndexPath) -> AllHoursCollectionViewCellViewModelProtocol? {
-        guard let hours = hours else { return nil }
+        guard let hours = self.weather?.forecast?.forecastday?.first?.hour else { return nil }
         let hour = hours[indexPath.row]
-        return AllHoursCollectionViewCellViewModel(hours: hour)
+        return AllHoursCollectionViewCellViewModel(hour: hour)
     }
     
     func selectedRow(for indexPath: IndexPath) {
         self.indexPath = indexPath
     }
     
-    func sevenDaysWeather() -> SevenDaysViewModelProtocol? {
-        guard let sevenDaysWeather = weather else { return nil }
-        return SevenDaysViewModel(weather: sevenDaysWeather)
+    func sevenDaysWeather() -> NextDaysViewModelProtocol? {
+        guard let weather = weather,
+              let day = weather.forecast?.forecastday?.first?.day
+        else { return nil }
+        
+        let nextDaysWeather = NextDaysWeather(city: weather.location?.name ?? "",
+                                              temp: String(day.avgtemp_c ?? 0.0),
+                                              tempMin: String(day.mintemp_c ?? 0.0),
+                                              wind: String(day.maxwind_mph ?? 0.0),
+                                              humidity: String(day.avghumidity ?? 0.0),
+                                              precipitation: String(day.daily_chance_of_rain ?? 0.0),
+                                              weatherDescription: day.condition?.text ?? "",
+                                              weatherImage: day.condition?.weatherImageName() ?? "",
+                                              nextDaysWeather: weather.forecast?.forecastday)
+        return NextDaysViewModel(weather: nextDaysWeather)
     }
 }

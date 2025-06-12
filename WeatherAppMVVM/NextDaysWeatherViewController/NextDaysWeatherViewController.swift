@@ -1,5 +1,5 @@
 //
-//  SevenDaysWeatherViewController.swift
+//  NextDaysWeatherViewController:.swift
 //  WeatherAppMVVM
 //
 //  Created by Артем Кудрявцев on 26.05.2023.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SevenDaysWeatherViewController: UIViewController {
+class NextDaysWeatherViewController: UIViewController {
     
     private var backgroundView: UIView!
     private var gradient: CAGradientLayer!
@@ -15,7 +15,7 @@ class SevenDaysWeatherViewController: UIViewController {
     private var sevenDaysLabel: UILabel!
     private var backButton: UIButton!
     private var weatherImage: UIImageView!
-    private var tommorowLabel: UILabel!
+    private var todayLabel: UILabel!
     private var tempLabel: UILabel!
     private var minTempLabel: UILabel!
     private var weatherDiscription: UILabel!
@@ -28,23 +28,19 @@ class SevenDaysWeatherViewController: UIViewController {
     private var humidityImageView: UIImageView!
     private var humidityOptionLabel: UILabel!
     private var humidityNameLabel: UILabel!
-    private var chanceOfRainStackView: UIStackView!
-    private var chanceOfRainImageView: UIImageView!
-    private var chanceOfRainOptionLabel: UILabel!
-    private var chanceOfRainNameLabel: UILabel!
+    private var precipitationStackView: UIStackView!
+    private var precipitationImageView: UIImageView!
+    private var precipitationOptionLabel: UILabel!
+    private var precipitationNameLabel: UILabel!
     private var allDetailStackView: UIStackView!
-    var sevenDaysTableView: UITableView!
+    var nextDaysTableView: UITableView!
     
-    var viewModel: SevenDaysViewModelProtocol! 
+    var viewModel: NextDaysViewModelProtocol! 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
-        setupUI()
-        setupSettings()
-        setupConstraints()
-        
-        view.backgroundColor = UIColor(named: "backgroundColor")
+        configureUI()
+        makeConstraints()
     }
     
     override func viewDidLayoutSubviews() {
@@ -52,14 +48,15 @@ class SevenDaysWeatherViewController: UIViewController {
     }
 
     
-    private func setupUI() {
+    private func configureUI() {
+        view.backgroundColor = UIColor(named: "backgroundColor")
         backgroundView = UIView()
         calendarSign = UIImageView()
         sevenDaysLabel = UILabel()
         backButton = UIButton()
         gradient = CAGradientLayer()
         weatherImage = UIImageView()
-        tommorowLabel = UILabel()
+        todayLabel = UILabel()
         tempLabel = UILabel()
         minTempLabel = UILabel()
         weatherDiscription = UILabel()
@@ -72,12 +69,12 @@ class SevenDaysWeatherViewController: UIViewController {
         humidityImageView = UIImageView()
         humidityOptionLabel = UILabel()
         humidityNameLabel = UILabel()
-        chanceOfRainStackView = UIStackView()
-        chanceOfRainImageView = UIImageView()
-        chanceOfRainOptionLabel = UILabel()
-        chanceOfRainNameLabel = UILabel()
+        precipitationStackView = UIStackView()
+        precipitationImageView = UIImageView()
+        precipitationOptionLabel = UILabel()
+        precipitationNameLabel = UILabel()
         allDetailStackView = UIStackView()
-        sevenDaysTableView = UITableView()
+        nextDaysTableView = UITableView()
         
         view.addSubview(backgroundView)
         backgroundView.layer.addSublayer(gradient)
@@ -85,7 +82,7 @@ class SevenDaysWeatherViewController: UIViewController {
         backgroundView.addSubview(calendarSign)
         backgroundView.addSubview(sevenDaysLabel)
         backgroundView.addSubview(weatherImage)
-        backgroundView.addSubview(tommorowLabel)
+        backgroundView.addSubview(todayLabel)
         backgroundView.addSubview(tempLabel)
         backgroundView.addSubview(minTempLabel)
         backgroundView.addSubview(weatherDiscription)
@@ -98,18 +95,20 @@ class SevenDaysWeatherViewController: UIViewController {
         humidityStackView.addArrangedSubview(humidityImageView)
         humidityStackView.addArrangedSubview(humidityOptionLabel)
         humidityStackView.addArrangedSubview(humidityNameLabel)
-        backgroundView.addSubview(chanceOfRainStackView)
-        chanceOfRainStackView.addArrangedSubview(chanceOfRainImageView)
-        chanceOfRainStackView.addArrangedSubview(chanceOfRainOptionLabel)
-        chanceOfRainStackView.addArrangedSubview(chanceOfRainNameLabel)
+        backgroundView.addSubview(precipitationStackView)
+        precipitationStackView.addArrangedSubview(precipitationImageView)
+        precipitationStackView.addArrangedSubview(precipitationOptionLabel)
+        precipitationStackView.addArrangedSubview(precipitationNameLabel)
         backgroundView.addSubview(allDetailStackView)
         allDetailStackView.addArrangedSubview(windStackView)
         allDetailStackView.addArrangedSubview(humidityStackView)
-        allDetailStackView.addArrangedSubview(chanceOfRainStackView)
-        view.addSubview(sevenDaysTableView)
+        allDetailStackView.addArrangedSubview(precipitationStackView)
+        view.addSubview(nextDaysTableView)
+        
+        configureSettings()
     }
     
-    private func setupSettings() {
+    private func configureSettings() {
         
         let topColor = #colorLiteral(red: 0.08297913522, green: 0.7363885045, blue: 0.9625709653, alpha: 1).cgColor
         let bottomColor = #colorLiteral(red: 0.06859397143, green: 0.4181304872, blue: 0.9508929849, alpha: 1).cgColor
@@ -133,19 +132,19 @@ class SevenDaysWeatherViewController: UIViewController {
         sevenDaysLabel.font = UIFont(name: "helvetica-bold", size: 18)
         sevenDaysLabel.textColor = .white
         sevenDaysLabel.textAlignment = .center
-        sevenDaysLabel.text = "7 Days"
+        sevenDaysLabel.text = " Next Days"
         
         weatherImage.translatesAutoresizingMaskIntoConstraints = false
         weatherImage.image = UIImage(named: viewModel.weatherImage)
         weatherImage.contentMode = .scaleAspectFit
         
-        tommorowLabel.translatesAutoresizingMaskIntoConstraints = false
-        tommorowLabel.font = UIFont(name: "helvetica", size: 16)
-        tommorowLabel.text = "Tommorow"
-        tommorowLabel.textAlignment = .left
-        tommorowLabel.textColor = .white
-        tommorowLabel.adjustsFontSizeToFitWidth = true
-        tommorowLabel.minimumScaleFactor = 0.5
+        todayLabel.translatesAutoresizingMaskIntoConstraints = false
+        todayLabel.font = UIFont(name: "helvetica", size: 16)
+        todayLabel.text = "Today"
+        todayLabel.textAlignment = .center
+        todayLabel.textColor = .white
+        todayLabel.adjustsFontSizeToFitWidth = true
+        todayLabel.minimumScaleFactor = 0.5
         
         tempLabel.translatesAutoresizingMaskIntoConstraints = false
         tempLabel.font = UIFont(name: "helvetica-bold", size: 50)
@@ -188,10 +187,10 @@ class SevenDaysWeatherViewController: UIViewController {
                                 nameLabel: humidityNameLabel,
                                 imageSystemName: "humidity",
                                 name: "Humidity", optionals: viewModel.humidity)
-        settingDetailStackViews(stackView: chanceOfRainStackView,
-                                imageView: chanceOfRainImageView,
-                                optionalLabel: chanceOfRainOptionLabel,
-                                nameLabel: chanceOfRainNameLabel,
+        settingDetailStackViews(stackView: precipitationStackView,
+                                imageView: precipitationImageView,
+                                optionalLabel: precipitationOptionLabel,
+                                nameLabel: precipitationNameLabel,
                                 imageSystemName: "cloud.rain",
                                 name: "Chance of rain", optionals: viewModel.chanceOfRain)
         
@@ -199,16 +198,16 @@ class SevenDaysWeatherViewController: UIViewController {
         allDetailStackView.translatesAutoresizingMaskIntoConstraints = false
         allDetailStackView.distribution = .fillEqually
         
-        sevenDaysTableView.translatesAutoresizingMaskIntoConstraints = false
-        sevenDaysTableView.delegate = self
-        sevenDaysTableView.dataSource = self
-        sevenDaysTableView.register(SevenDaysTableViewCell.self, forCellReuseIdentifier: "sevenDaysCell")
-        sevenDaysTableView.isUserInteractionEnabled = false
-        sevenDaysTableView.separatorStyle = .none
+        nextDaysTableView.translatesAutoresizingMaskIntoConstraints = false
+        nextDaysTableView.delegate = self
+        nextDaysTableView.dataSource = self
+        nextDaysTableView.register(NextDaysTableViewCell.self, forCellReuseIdentifier: "NextDaysCell")
+        nextDaysTableView.isUserInteractionEnabled = false
+        nextDaysTableView.separatorStyle = .none
         
     }
     
-    private func setupConstraints() {
+    private func makeConstraints() {
         NSLayoutConstraint.activate([
             backgroundView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 5),
             backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5),
@@ -238,10 +237,10 @@ class SevenDaysWeatherViewController: UIViewController {
             minTempLabel.centerYAnchor.constraint(equalTo: tempLabel.centerYAnchor, constant: 6),
             minTempLabel.trailingAnchor.constraint(lessThanOrEqualTo: backgroundView.trailingAnchor, constant: -10),
             
-            tommorowLabel.topAnchor.constraint(greaterThanOrEqualTo: sevenDaysLabel.bottomAnchor, constant: 3),
-            tommorowLabel.leadingAnchor.constraint(equalTo: weatherImage.trailingAnchor),
-            tommorowLabel.bottomAnchor.constraint(greaterThanOrEqualTo: tempLabel.topAnchor, constant: -20),
-            tommorowLabel.bottomAnchor.constraint(lessThanOrEqualTo: tempLabel.topAnchor, constant: 0),
+            todayLabel.topAnchor.constraint(greaterThanOrEqualTo: sevenDaysLabel.bottomAnchor, constant: 3),
+            todayLabel.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
+            todayLabel.bottomAnchor.constraint(greaterThanOrEqualTo: tempLabel.topAnchor, constant: -20),
+            todayLabel.bottomAnchor.constraint(lessThanOrEqualTo: tempLabel.topAnchor, constant: 0),
                         
             weatherDiscription.topAnchor.constraint(greaterThanOrEqualTo: tempLabel.bottomAnchor, constant: -5),
             weatherDiscription.leadingAnchor.constraint(equalTo: weatherImage.trailingAnchor),
@@ -262,10 +261,10 @@ class SevenDaysWeatherViewController: UIViewController {
             weatherDiscription.bottomAnchor.constraint(lessThanOrEqualTo: separatorView.topAnchor, constant: -2),
             weatherImage.bottomAnchor.constraint(equalTo: separatorView.topAnchor, constant: -5),
             
-            sevenDaysTableView.topAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: 10),
-            sevenDaysTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            sevenDaysTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            sevenDaysTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            nextDaysTableView.topAnchor.constraint(equalTo: backgroundView.bottomAnchor, constant: 10),
+            nextDaysTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            nextDaysTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            nextDaysTableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
  
@@ -275,7 +274,7 @@ class SevenDaysWeatherViewController: UIViewController {
     
 }
 
-extension SevenDaysWeatherViewController {
+extension NextDaysWeatherViewController {
     
     private func settingDetailStackViews(stackView: UIStackView, imageView: UIImageView, optionalLabel: UILabel, nameLabel: UILabel, imageSystemName: String, name: String, optionals: String) {
         stackView.axis = .vertical
@@ -293,7 +292,7 @@ extension SevenDaysWeatherViewController {
     }
 }
 
-extension SevenDaysWeatherViewController: UITableViewDelegate, UITableViewDataSource {
+extension NextDaysWeatherViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let count = viewModel.numberOfItems() else { return 0 }
@@ -301,12 +300,11 @@ extension SevenDaysWeatherViewController: UITableViewDelegate, UITableViewDataSo
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "sevenDaysCell", for: indexPath) as! SevenDaysTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "NextDaysCell", for: indexPath) as! NextDaysTableViewCell
         
         let cellViewModel = viewModel.cellViewModel(for: indexPath)
         cell.viewModel = cellViewModel
         cell.isSelected = false
-        
         cell.awakeFromNib()
         
         return cell

@@ -17,7 +17,6 @@ class LocatioManager {
     
     
     func fetchLocation(lon: CLLocationDegrees, lat: CLLocationDegrees, locationName: UILabel) {
-
         let location = CLLocation(latitude: lat, longitude: lon)
         
         CLGeocoder().reverseGeocodeLocation(location) { (placemarks, error) in

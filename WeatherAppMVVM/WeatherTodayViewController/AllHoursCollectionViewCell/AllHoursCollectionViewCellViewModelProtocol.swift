@@ -8,8 +8,8 @@
 import Foundation
 
 protocol AllHoursCollectionViewCellViewModelProtocol {
-    var temp: Float { get }
+    var hour: Hour { get }
+    var temp: String { get }
     var image: String { get }
     var time: String { get }
-    init(hours: Hours)
 }
