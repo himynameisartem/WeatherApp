@@ -15,8 +15,8 @@ class DateManager {
     
     static let shared = DateManager()
     
-    let currentDate = Date()
-    var dateFormatter = DateFormatter()
+    private let currentDate = Date()
+    private var dateFormatter = DateFormatter()
     
     func getWeekDayFrom(dateString: String) -> String? {
         dateFormatter.dateFormat = "yyyy-MM-dd"

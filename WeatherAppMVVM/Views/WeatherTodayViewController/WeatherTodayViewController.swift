@@ -46,18 +46,22 @@ class WeatherTodayViewController: UIViewController {
     
     var viewModel: WeatherTodayViewModelProtocol! {
         didSet {
-            viewModel.fetchWeather {
-                guard let weather = self.viewModel.weather else { return }
-                self.cityNameLabel.text = weather.location?.name ?? ""
-                self.temperatureLabel.text = "\(weather.current?.temp_c ?? 0.0)°"
-                self.weatherDescriptionLabel.text = weather.current?.condition?.text ?? ""
-                self.windOptionLabel.text = "\(weather.current?.wind_kph ?? 0.0) km/h"
-                self.humidityOptionLabel.text = "\(weather.current?.humidity ?? 0.0)%"
-                self.precipitationOptionLabel.text = "\(weather.current?.precip_mm ?? 0.0) mm."
-                self.weatherImage.image = UIImage(named: weather.current?.condition?.weatherImageName() ?? "")
-                self.dateLabel.text = DateManager.shared.todayDate(type: .full)
-                self.nextDaysButton.isEnabled = true
-                self.allHoursCollectionView.reloadData()
+            viewModel.fetchWeather { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case .success:
+                    self.cityNameLabel.text = viewModel.cityName
+                    self.temperatureLabel.text = viewModel.tempC
+                    self.weatherDescriptionLabel.text = viewModel.weatherDescription
+                    self.weatherImage.image = UIImage(named: viewModel.iconName)
+                    self.windOptionLabel.text = viewModel.windSpeed
+                    self.humidityOptionLabel.text = viewModel.humidity
+                    self.precipitationOptionLabel.text = viewModel.precipitation
+                    self.nextDaysButton.isEnabled = true
+                    self.allHoursCollectionView.reloadData()
+                case .failure(let error):
+                    self.showErrorAlert(message: error.localizedDescription)
+                }
             }
         }
     }
@@ -66,8 +70,6 @@ class WeatherTodayViewController: UIViewController {
         super.viewDidLoad()
         viewModel = WeatherTodayViewModel()
         configureUI()
-        configureProperties()
-        makeConstraints()
     }
     
     override func viewDidLayoutSubviews() {
@@ -143,6 +145,8 @@ class WeatherTodayViewController: UIViewController {
         view.addGestureRecognizer(tapGesture)
         choiseCityTextField.delegate = self
         
+        configureProperties()
+        makeConstraints()
     }
     
     private func configureProperties() {
@@ -306,8 +310,8 @@ class WeatherTodayViewController: UIViewController {
             
             weatherDescriptionLabel.topAnchor.constraint(equalTo: temperatureLabel.bottomAnchor),
             weatherDescriptionLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            weatherDescriptionLabel.bottomAnchor.constraint(equalTo: dateLabel.topAnchor),
-            weatherDescriptionLabel.heightAnchor.constraint(greaterThanOrEqualToConstant: 15),
+            weatherDescriptionLabel.leadingAnchor.constraint(equalTo: todayView.leadingAnchor, constant: 20),
+            weatherDescriptionLabel.trailingAnchor.constraint(equalTo: todayView.trailingAnchor, constant: -20),
             
             dateLabel.topAnchor.constraint(equalTo: weatherDescriptionLabel.bottomAnchor, constant: 0),
             dateLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -357,6 +361,12 @@ class WeatherTodayViewController: UIViewController {
     @objc private func endEdidtingTapped() {
         choiseCityTextField.endEditing(true)
     }
+    
+    private func showErrorAlert(message: String) {
+        let alertController = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .cancel))
+        present(alertController, animated: true)
+    }
 }
 
 extension WeatherTodayViewController: UITextFieldDelegate {
@@ -365,25 +375,6 @@ extension WeatherTodayViewController: UITextFieldDelegate {
         viewModel.city = enteredCity
         textField.resignFirstResponder()
         return true
-    }
-}
-
-//MARK: - settingDetailStackViews
-
-extension WeatherTodayViewController {
-    
-    private func settingDetailStackViews(stackView: UIStackView, imageView: UIImageView, optionalLabel: UILabel, nameLabel: UILabel, imageSystemName: String, name: String) {
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.distribution = .fillEqually
-        imageView.image = UIImage(systemName: imageSystemName)
-        imageView.tintColor = .white
-        optionalLabel.font = UIFont.systemFont(ofSize: 14)
-        optionalLabel.textColor = .white
-        nameLabel.text = name
-        nameLabel.font = UIFont.systemFont(ofSize: 12)
-        nameLabel.textColor = .white
-        nameLabel.alpha = 0.5
     }
 }
 
@@ -411,6 +402,16 @@ extension WeatherTodayViewController: UICollectionViewDelegate, UICollectionView
 
 extension WeatherTodayViewController: CLLocationManagerDelegate {
     
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        showErrorAlert(message: "Failed to determine the location: \(error.localizedDescription)")
+    }
+
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .denied {
+            showErrorAlert(message: "Access to geolocation is prohibited. Allow access in the settings.")
+        }
+    }
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             longitude = location.coordinate.longitude
@@ -421,5 +422,24 @@ extension WeatherTodayViewController: CLLocationManagerDelegate {
                 self.viewModel.city = coordinate
             }
         }
+    }
+}
+
+//MARK: - settingDetailStackViews
+
+extension WeatherTodayViewController {
+    
+    private func settingDetailStackViews(stackView: UIStackView, imageView: UIImageView, optionalLabel: UILabel, nameLabel: UILabel, imageSystemName: String, name: String) {
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .fillEqually
+        imageView.image = UIImage(systemName: imageSystemName)
+        imageView.tintColor = .white
+        optionalLabel.font = UIFont.systemFont(ofSize: 14)
+        optionalLabel.textColor = .white
+        nameLabel.text = name
+        nameLabel.font = UIFont.systemFont(ofSize: 12)
+        nameLabel.textColor = .white
+        nameLabel.alpha = 0.5
     }
 }

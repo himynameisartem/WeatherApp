@@ -24,7 +24,6 @@ class AllHoursCollectionViewCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super .init(frame: frame)
         configureUI()
-        makeConstraints()
     }
     
     required init?(coder: NSCoder) {
@@ -47,6 +46,7 @@ class AllHoursCollectionViewCell: UICollectionViewCell {
         addSubview(tempLabel)
         addSubview(weatherImage)
         addSubview(timeLabel)
+        makeConstraints()
     }
     
     private func makeConstraints() {

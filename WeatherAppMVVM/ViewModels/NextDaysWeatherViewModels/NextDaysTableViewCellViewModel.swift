@@ -16,25 +16,19 @@ class NextDaysTableViewCellViewModel: NextDaysTableViewCellViewModelProtocol {
         let weekDay = DateManager.shared.getWeekDayFrom(dateString: dateString) ?? ""
         return weekDay
     }
-    
     var imageName: String {
         return day.day?.condition?.weatherImageName() ?? ""
     }
-    
-    var desription: String {
+        var desription: String {
         return day.day?.condition?.text ?? ""
     }
-    
     var maxTemp: String {
         return "\(day.day?.avgtemp_c ?? 0.0)°"
     }
-    
     var minTemp: String {
         return "/ \(day.day?.mintemp_c ?? 0.0)°"
     }
-    
     required init(day: Forecastday) {
         self.day = day
     }
-
 }

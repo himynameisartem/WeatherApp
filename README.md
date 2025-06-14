@@ -1,18 +1,18 @@
 #  WeatherApp
 
-    WeatherApp is an application that displays the current weather based on data fetched from the network. This app is developed using URLSession for network requests, programmatic UI without Storyboard, and the MVVM (Model-View-ViewModel) pattern for responsibility separation and code organization.
+    The WeatherApp project is an application that displays the current weather based on data retrieved from the internet. It is built using URLSession for performing network requests, error handling, programmatic UI layout (without Storyboards), and the MVVM (Model-View-ViewModel) pattern to separate responsibilities and organize the codebase.
 
 ## Features
 
-        *Displaying the current weather for a given location.
+        •   Displaying the current weather for a given location.
     
-        *Retrieving weather data from the network using URLSession.
+        •   Retrieving weather data from the network using URLSession.
     
-        *Parsing the JSON response to extract the necessary data.
+        •   Parsing the JSON response to extract the necessary data.
      
-        *Updating the user interface using MVVM and data binding.
+        •   Updating the user interface using MVVM and data binding.
     
-        *Handling errors during network requests or data retrieval.
+        •   Handling errors during network requests or data retrieval.
 
 ## Installation
 
@@ -25,12 +25,24 @@
 
 ## Dependencies
 
-    WeatherApp has no external dependencies. All the code is written in Swift and uses iOS standard libraries.
+    The application does not use any third-party libraries.
+    Everything is implemented in Swift using standard iOS frameworks:
+
+        •    Foundation
+
+        •    UIKit
+
+        •    CoreLocation
 
 ## Usage
 
-    Upon launching the app, the user will be prompted to grant access to their location to fetch up-to-date weather data. After obtaining permission, the app will display the current weather based on the user's location.
-    You can also use the app to view the weather in other locations by entering a city name or coordinates into the respective field and tapping the "Get Weather" button. The app will perform a network request, retrieve weather data, and update the user interface using the MVVM pattern.
+        •    On first launch, the app will request access to your location
+
+        •    Once granted, it will display the current weather for your area
+
+        •    You can also manually enter a city name to fetch weather data for that location
+
+    The UI updates automatically upon receiving data, thanks to the MVVM pattern.
 
 ## Contact
 
@@ -40,19 +52,19 @@
 
 #  WeatherApp
 
-    Проект WeatherApp - это приложение для отображения текущей погоды на основе данных, полученных из сети. Это приложение разработано с использованием URLSession для выполнения сетевых запросов, верстки UI через код без использования Storyboard и паттерна MVVM (Model-View-ViewModel) для разделения ответственности и организации кода.
+    Проект WeatherApp - это приложение для отображения текущей погоды на основе данных, полученных из сети. Это приложение разработано с использованием URLSession для выполнения сетевых запросов, обработки ошибок, верстки UI через код без использования Storyboard и паттерна MVVM (Model-View-ViewModel) для разделения ответственности и организации кода.
 
 ## Возможности
 
-        *Отображение текущей погоды для заданного местоположения.
+        •   Отображение текущей погоды для заданного местоположения.
         
-        *Получение данных о погоде из сети с использованием URLSession.
+        •   Получение данных о погоде из сети с использованием URLSession.
         
-        *Парсинг JSON-ответа для извлечения необходимых данных.
+        •   Парсинг JSON-ответа для извлечения необходимых данных.
         
-        *Обновление интерфейса пользователя с помощью MVVM и обратного связывания данных.
+        •   Обновление интерфейса пользователя с помощью MVVM и обратного связывания данных.
         
-        *Обработка ошибок при выполнении сетевых запросов или получении данных.
+        •   Обработка ошибок при выполнении сетевых запросов или получении данных.
 
 ## Установка
 
@@ -65,13 +77,23 @@
 
 ## Зависимости
 
-    WeatherApp не имеет зависимостей от сторонних библиотек. Весь код написан на языке Swift и использует стандартные библиотеки iOS.
+    Приложение не использует сторонние библиотеки. Все реализовано на языке Swift с применением стандартных фреймворков:
+
+        •    Foundation
+
+        •    UIKit
+
+        •    CoreLocation
 
 ## Использование
 
-    При запуске приложения пользователю будет предложено разрешить доступ к его местоположению для получения актуальных данных о погоде. После получения разрешения приложение отобразит текущую погоду на основе местоположения пользователя.
+        •    При первом запуске приложение запросит доступ к геолокации
 
-    Вы также можете использовать приложение для просмотра погоды в других местах, введя название города или координаты в соответствующее поле и нажав кнопку "Получить погоду". Приложение выполнит сетевой запрос, получит данные о погоде и обновит интерфейс пользователя с использованием паттерна MVVM.
+        •    После разрешения вы увидите текущую погоду для вашего местоположения
+
+        •    Вы также можете ввести название города вручную и получить информацию о погоде по запросу
+
+    Интерфейс обновляется автоматически при получении данных, благодаря использованию паттерна MVVM.
 
 ## Связь
 

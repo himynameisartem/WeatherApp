@@ -9,6 +9,8 @@ import UIKit
 
 class NextDaysWeatherViewController: UIViewController {
     
+    var viewModel: NextDaysViewModelProtocol!
+    
     private var backgroundView: UIView!
     private var gradient: CAGradientLayer!
     private var calendarSign: UIImageView!
@@ -28,19 +30,28 @@ class NextDaysWeatherViewController: UIViewController {
     private var humidityImageView: UIImageView!
     private var humidityOptionLabel: UILabel!
     private var humidityNameLabel: UILabel!
-    private var precipitationStackView: UIStackView!
-    private var precipitationImageView: UIImageView!
-    private var precipitationOptionLabel: UILabel!
-    private var precipitationNameLabel: UILabel!
+    private var chanceOfRainStackView: UIStackView!
+    private var chanceOfRainImageView: UIImageView!
+    private var chanceOfRainOptionLabel: UILabel!
+    private var chanceOfRainNameLabel: UILabel!
     private var allDetailStackView: UIStackView!
     var nextDaysTableView: UITableView!
     
-    var viewModel: NextDaysViewModelProtocol! 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        guard let viewModel = viewModel else { return }
+        weatherImage.image = UIImage(named: viewModel.weatherImage)
+        tempLabel.text = viewModel.temp
+        minTempLabel.text = viewModel.tempMin
+        weatherDiscription.text = viewModel.weatherDescription
+        windOptionLabel.text = viewModel.wind
+        humidityOptionLabel.text = viewModel.humidity
+        chanceOfRainOptionLabel.text = viewModel.chanceOfRain
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        makeConstraints()
     }
     
     override func viewDidLayoutSubviews() {
@@ -69,10 +80,10 @@ class NextDaysWeatherViewController: UIViewController {
         humidityImageView = UIImageView()
         humidityOptionLabel = UILabel()
         humidityNameLabel = UILabel()
-        precipitationStackView = UIStackView()
-        precipitationImageView = UIImageView()
-        precipitationOptionLabel = UILabel()
-        precipitationNameLabel = UILabel()
+        chanceOfRainStackView = UIStackView()
+        chanceOfRainImageView = UIImageView()
+        chanceOfRainOptionLabel = UILabel()
+        chanceOfRainNameLabel = UILabel()
         allDetailStackView = UIStackView()
         nextDaysTableView = UITableView()
         
@@ -95,17 +106,18 @@ class NextDaysWeatherViewController: UIViewController {
         humidityStackView.addArrangedSubview(humidityImageView)
         humidityStackView.addArrangedSubview(humidityOptionLabel)
         humidityStackView.addArrangedSubview(humidityNameLabel)
-        backgroundView.addSubview(precipitationStackView)
-        precipitationStackView.addArrangedSubview(precipitationImageView)
-        precipitationStackView.addArrangedSubview(precipitationOptionLabel)
-        precipitationStackView.addArrangedSubview(precipitationNameLabel)
+        backgroundView.addSubview(chanceOfRainStackView)
+        chanceOfRainStackView.addArrangedSubview(chanceOfRainImageView)
+        chanceOfRainStackView.addArrangedSubview(chanceOfRainOptionLabel)
+        chanceOfRainStackView.addArrangedSubview(chanceOfRainNameLabel)
         backgroundView.addSubview(allDetailStackView)
         allDetailStackView.addArrangedSubview(windStackView)
         allDetailStackView.addArrangedSubview(humidityStackView)
-        allDetailStackView.addArrangedSubview(precipitationStackView)
+        allDetailStackView.addArrangedSubview(chanceOfRainStackView)
         view.addSubview(nextDaysTableView)
         
         configureSettings()
+        makeConstraints()
     }
     
     private func configureSettings() {
@@ -135,7 +147,6 @@ class NextDaysWeatherViewController: UIViewController {
         sevenDaysLabel.text = " Next Days"
         
         weatherImage.translatesAutoresizingMaskIntoConstraints = false
-        weatherImage.image = UIImage(named: viewModel.weatherImage)
         weatherImage.contentMode = .scaleAspectFit
         
         todayLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -149,7 +160,6 @@ class NextDaysWeatherViewController: UIViewController {
         tempLabel.translatesAutoresizingMaskIntoConstraints = false
         tempLabel.font = UIFont(name: "helvetica-bold", size: 50)
         tempLabel.textColor = .white
-        tempLabel.text = viewModel.temp
         tempLabel.textAlignment = .left
         tempLabel.adjustsFontSizeToFitWidth = true
         tempLabel.minimumScaleFactor = 0.5        
@@ -159,7 +169,6 @@ class NextDaysWeatherViewController: UIViewController {
         minTempLabel.textColor = .white
         minTempLabel.alpha = 0.5
         minTempLabel.textAlignment = .left
-        minTempLabel.text = viewModel.tempMin
         minTempLabel.adjustsFontSizeToFitWidth = true
         minTempLabel.minimumScaleFactor = 0.6
         
@@ -169,7 +178,6 @@ class NextDaysWeatherViewController: UIViewController {
         weatherDiscription.textAlignment = .left
         weatherDiscription.alpha = 0.5
         weatherDiscription.adjustsFontSizeToFitWidth = true
-        weatherDiscription.text = viewModel.weatherDescription
         
         separatorView.translatesAutoresizingMaskIntoConstraints = false
         separatorView.backgroundColor = .systemGray5
@@ -180,19 +188,19 @@ class NextDaysWeatherViewController: UIViewController {
                                 optionalLabel: windOptionLabel,
                                 nameLabel: windNameLabel,
                                 imageSystemName: "wind",
-                                name: "Wind", optionals: viewModel.wind)
+                                name: "Wind")
         settingDetailStackViews(stackView: humidityStackView,
                                 imageView: humidityImageView,
                                 optionalLabel: humidityOptionLabel,
                                 nameLabel: humidityNameLabel,
                                 imageSystemName: "humidity",
-                                name: "Humidity", optionals: viewModel.humidity)
-        settingDetailStackViews(stackView: precipitationStackView,
-                                imageView: precipitationImageView,
-                                optionalLabel: precipitationOptionLabel,
-                                nameLabel: precipitationNameLabel,
+                                name: "Humidity")
+        settingDetailStackViews(stackView: chanceOfRainStackView,
+                                imageView: chanceOfRainImageView,
+                                optionalLabel: chanceOfRainOptionLabel,
+                                nameLabel: chanceOfRainNameLabel,
                                 imageSystemName: "cloud.rain",
-                                name: "Chance of rain", optionals: viewModel.chanceOfRain)
+                                name: "Chance of rain")
         
         allDetailStackView.axis = .horizontal
         allDetailStackView.translatesAutoresizingMaskIntoConstraints = false
@@ -274,23 +282,7 @@ class NextDaysWeatherViewController: UIViewController {
     
 }
 
-extension NextDaysWeatherViewController {
-    
-    private func settingDetailStackViews(stackView: UIStackView, imageView: UIImageView, optionalLabel: UILabel, nameLabel: UILabel, imageSystemName: String, name: String, optionals: String) {
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.distribution = .fillEqually
-        imageView.image = UIImage(systemName: imageSystemName)
-        imageView.tintColor = .white
-        optionalLabel.font = UIFont.systemFont(ofSize: 14)
-        optionalLabel.textColor = .white
-        optionalLabel.text = optionals
-        nameLabel.text = name
-        nameLabel.font = UIFont.systemFont(ofSize: 12)
-        nameLabel.textColor = .white
-        nameLabel.alpha = 0.5
-    }
-}
+//MARK: - UITableViewDelegate, UITableViewDataSource
 
 extension NextDaysWeatherViewController: UITableViewDelegate, UITableViewDataSource {
     
@@ -301,17 +293,33 @@ extension NextDaysWeatherViewController: UITableViewDelegate, UITableViewDataSou
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NextDaysCell", for: indexPath) as! NextDaysTableViewCell
-        
         let cellViewModel = viewModel.cellViewModel(for: indexPath)
         cell.viewModel = cellViewModel
         cell.isSelected = false
-        cell.awakeFromNib()
-        
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return (view.frame.height - view.frame.height / 3) / 7
     }
+}
+
+
+//MARK: - settingDetailStackViews
+
+extension NextDaysWeatherViewController {
     
+    private func settingDetailStackViews(stackView: UIStackView, imageView: UIImageView, optionalLabel: UILabel, nameLabel: UILabel, imageSystemName: String, name: String) {
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.distribution = .fillEqually
+        imageView.image = UIImage(systemName: imageSystemName)
+        imageView.tintColor = .white
+        optionalLabel.font = UIFont.systemFont(ofSize: 14)
+        optionalLabel.textColor = .white
+        nameLabel.text = name
+        nameLabel.font = UIFont.systemFont(ofSize: 12)
+        nameLabel.textColor = .white
+        nameLabel.alpha = 0.5
+    }
 }

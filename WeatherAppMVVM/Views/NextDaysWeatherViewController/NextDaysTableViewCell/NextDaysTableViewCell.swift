@@ -27,14 +27,16 @@ class NextDaysTableViewCell: UITableViewCell {
         }
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        setupUI()
-        setupSettings()
-        setupConstraints()
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        configureUI()
     }
     
-    private func setupUI() {
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configureUI() {
         
         weekdayLabel = UILabel()
         weatherImage = UIImageView()
@@ -47,6 +49,9 @@ class NextDaysTableViewCell: UITableViewCell {
         addSubview(descriptionLabel)
         addSubview(maxTempLabel)
         addSubview(minTempLabel)
+        
+        setupSettings()
+        makeConstraints()
     }
     
     private func setupSettings() {
@@ -72,7 +77,7 @@ class NextDaysTableViewCell: UITableViewCell {
         minTempLabel.contentMode = .bottom
     }
     
-    private func setupConstraints() {
+    private func makeConstraints() {
         NSLayoutConstraint.activate([
             weekdayLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             weekdayLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),

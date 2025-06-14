@@ -10,17 +10,48 @@ import Foundation
 class WeatherTodayViewModel: WeatherTodayViewModelProtocol {
     
     var city: String?
-    var weather: Weather? = nil
+    var weather: Weather?
     private var indexPath: IndexPath?
-    
-    func fetchWeather(completion: @escaping () -> Void) {
-        WeatherNetworkManager.shared.fetchRequest(city: city) { weather in
+
+    func fetchWeather(completion: @escaping (Result<Void, Error>) -> Void) {
+        NetworkManager.shared.fetchRequest(city: city) { [ weak self ] result in
             DispatchQueue.main.async {
-                self.weather = weather
-                completion()
+                switch result {
+                case .success(let weather):
+                    self?.weather = weather
+                    completion(.success(()))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
         }
     }
+    
+    var cityName: String {
+        return weather?.location?.name ?? ""
+    }
+    var tempC: String {
+        return String(weather?.current?.temp_c ?? 0.0)
+    }
+    var weatherDescription: String {
+        return weather?.current?.condition?.text ?? ""
+    }
+    var iconName: String {
+        weather?.current?.condition?.weatherImageName() ?? ""
+    }
+    var windSpeed: String {
+        return String(weather?.current?.wind_kph ?? 0.0)
+    }
+    var humidity: String {
+        return String(weather?.current?.humidity ?? 0.0)
+    }
+    var precipitation: String {
+        return String(weather?.current?.precip_mm ?? 0.0)
+    }
+    var currentDate: String {
+        return DateManager.shared.todayDate(type: .full)
+    }
+    
     
     func numberOfItems() -> Int {
         return weather?.forecast?.forecastday?.first?.hour?.count ?? 0
@@ -30,10 +61,6 @@ class WeatherTodayViewModel: WeatherTodayViewModelProtocol {
         guard let hours = self.weather?.forecast?.forecastday?.first?.hour else { return nil }
         let hour = hours[indexPath.row]
         return AllHoursCollectionViewCellViewModel(hour: hour)
-    }
-    
-    func selectedRow(for indexPath: IndexPath) {
-        self.indexPath = indexPath
     }
     
     func sevenDaysWeather() -> NextDaysViewModelProtocol? {
